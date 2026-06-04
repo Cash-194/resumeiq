@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResumeIQ — AI Interview Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+         :root {
+            --green: #00C07F;
+            --green-dark: #00996A;
+            --green-glow: rgba(0, 192, 127, 0.15);
+            --bg: #050D0A;
+            --bg2: #0A1A12;
+            --bg3: #0F2318;
+            --text: #E8F5EE;
+            --muted: #6B9E82;
+            --border: rgba(0, 192, 127, 0.15);
+            --card: rgba(15, 35, 24, 0.8);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* Background grid */
+        
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(0, 192, 127, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 192, 127, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* Glowing orbs */
+        
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .orb1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 192, 127, 0.12) 0%, transparent 70%);
+            top: -100px;
+            right: -100px;
+            animation: drift1 8s ease-in-out infinite;
+        }
+        
+        .orb2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 150, 100, 0.08) 0%, transparent 70%);
+            bottom: 100px;
+            left: -150px;
+            animation: drift2 10s ease-in-out infinite;
+        }
+        
+        @keyframes drift1 {
+            0%,
+            100% {
+                transform: translate(0, 0)
+            }
+            50% {
+                transform: translate(-30px, 30px)
+            }
+        }
+        
+        @keyframes drift2 {
+            0%,
+            100% {
+                transform: translate(0, 0)
+            }
+            50% {
+                transform: translate(20px, -20px)
+            }
+        }
+        /* NAV */
+        
+        nav {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 3rem;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+        }
+        
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+        
+        .logo span {
+            color: var(--green);
+        }
+        
+        .nav-pill {
+            background: var(--green-glow);
+            border: 1px solid var(--border);
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+        /* HERO */
+        
+        .hero {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--green-glow);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 12px;
+            color: var(--green);
+            font-weight: 500;
+            margin-bottom: 2rem;
+            animation: fadeUp 0.6s ease both;
+        }
+        
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.4)
+            }
+        }
+        
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(38px, 7vw, 72px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.6s 0.1s ease both;
+        }
+        
+        h1 .accent {
+            color: var(--green);
+            position: relative;
+        }
+        
+        h1 .accent::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--green);
+            border-radius: 2px;
+            opacity: 0.4;
+        }
+        
+        .hero-sub {
+            font-size: 17px;
+            color: var(--muted);
+            font-weight: 300;
+            max-width: 520px;
+            margin: 0 auto 3rem;
+            line-height: 1.7;
+            animation: fadeUp 0.6s 0.2s ease both;
+        }
+        
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* FEATURES ROW */
+        
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+            animation: fadeUp 0.6s 0.3s ease both;
+        }
+        
+        .feat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+        
+        .feat-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        /* UPLOAD CARD */
+        
+        .upload-wrap {
+            position: relative;
+            z-index: 1;
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 0 1.5rem 6rem;
+            animation: fadeUp 0.6s 0.4s ease both;
+        }
+        
+        .upload-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--green), transparent);
+            opacity: 0.6;
+        }
+        
+        .drop-zone {
+            border: 2px dashed rgba(0, 192, 127, 0.25);
+            border-radius: 14px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: var(--green);
+            background: var(--green-glow);
+        }
+        
+        .drop-zone input[type=file] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .drop-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--green-glow);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            transition: transform 0.2s;
+        }
+        
+        .drop-zone:hover .drop-icon {
+            transform: scale(1.08);
+        }
+        
+        .drop-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--green);
+        }
+        
+        .drop-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        
+        .drop-sub {
+            font-size: 13px;
+            color: var(--muted);
+        }
+        
+        .drop-sub span {
+            color: var(--green);
+            font-weight: 500;
+        }
+        
+        .file-name {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            background: var(--green-glow);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--green);
+            margin-top: 12px;
+        }
+        
+        .file-name.show {
+            display: flex;
+        }
+        
+        .file-name svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--green);
+            flex-shrink: 0;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: var(--green);
+            color: #030D07;
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .submit-btn:hover {
+            background: #00D990;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0, 192, 127, 0.3);
+        }
+        
+        .submit-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: #030D07;
+        }
+        
+        .loading {
+            display: none;
+        }
+        
+        .submit-btn.loading .btn-text {
+            display: none;
+        }
+        
+        .submit-btn.loading .loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .spinner-sm {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(3, 13, 7, 0.3);
+            border-top-color: #030D07;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .note svg {
+            width: 13px;
+            height: 13px;
+            stroke: var(--muted);
+        }
+        /* STATS ROW */
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 1.5rem;
+        }
+        
+        .stat {
+            background: var(--bg2);
+            padding: 1.25rem;
+            text-align: center;
+        }
+        
+        .stat-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--green);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+        /* WHAT YOU GET */
+        
+        .what-section {
+            position: relative;
+            z-index: 1;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 0 1.5rem 5rem;
+        }
+        
+        .section-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            color: var(--green);
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        
+        .section-heading {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(24px, 4vw, 36px);
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: -1px;
+            margin-bottom: 3rem;
+            color: var(--text);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+        
+        .feat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        
+        .feat-card:hover {
+            border-color: rgba(0, 192, 127, 0.4);
+            transform: translateY(-3px);
+        }
+        
+        .feat-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--green-glow);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        
+        .feat-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--green);
+        }
+        
+        .feat-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+        
+        .feat-desc {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+        /* FOOTER */
+        
+        footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--muted);
+        }
+        
+        @media(max-width: 600px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+            .hero {
+                padding: 4rem 1.5rem 2rem;
+            }
+            .features {
+                gap: 1rem;
+            }
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <nav>
+        <div class="logo">Resume<span>IQ</span></div>
+        <div class="nav-pill">Powered by Llama 3</div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-badge">AI-Powered Interview Prep</div>
+        <h1>Crack your interview<br>with <span class="accent">AI insights</span></h1>
+        <p class="hero-sub">Upload your resume and get personalized HR & technical questions, suggested answers, resume score, and career advice — in seconds.</p>
+        <div class="features">
+            <div class="feat">
+                <div class="feat-dot"></div>Resume Score</div>
+            <div class="feat">
+                <div class="feat-dot"></div>10+ Interview Questions</div>
+            <div class="feat">
+                <div class="feat-dot"></div>Suggested Answers</div>
+            <div class="feat">
+                <div class="feat-dot"></div>ATS Keywords</div>
+        </div>
+    </section>
+
+    <div class="upload-wrap">
+        <div class="upload-card">
+            <form action="/upload" method="POST" enctype="multipart/form-data" id="upload-form">
+                <div class="drop-zone" id="drop-zone">
+                    <input type="file" name="resume" id="resume-input" accept=".pdf" required>
+                    <div class="drop-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9,15 12,12 15,15"/>
+          </svg>
+                    </div>
+                    <div class="drop-title">Drop your resume here</div>
+                    <div class="drop-sub">or <span>browse files</span> · PDF only</div>
+                </div>
+
+                <div class="file-name" id="file-name">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+                    <span id="file-label">resume.pdf</span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submit-btn">
+        <span class="btn-text">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          Analyze My Resume
+        </span>
+        <span class="loading">
+          <div class="spinner-sm"></div>
+          Analyzing your resume...
+        </span>
+      </button>
+            </form>
+
+            <p class="note">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+      </svg> Your resume is never stored permanently
+            </p>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-num">10+</div>
+                    <div class="stat-label">Questions</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">100</div>
+                    <div class="stat-label">Resume Score</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">5s</div>
+                    <div class="stat-label">Analysis Time</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="what-section">
+        <div class="section-label">What you get</div>
+        <div class="section-heading">Everything you need to<br>walk in confident</div>
+        <div class="features-grid">
+            <div class="feat-card">
+                <div class="feat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+                </div>
+                <div class="feat-title">Resume Score</div>
+                <div class="feat-desc">Get scored out of 100 across skills, projects, education, experience and presentation.</div>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+        </svg>
+                </div>
+                <div class="feat-title">HR & Technical Q&A</div>
+                <div class="feat-desc">Personalized questions from your actual resume with confident suggested answers to memorize.</div>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+                </div>
+                <div class="feat-title">Weak Area Detection</div>
+                <div class="feat-desc">Honest recruiter-style feedback on gaps in your profile before an interviewer finds them.</div>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+                </div>
+                <div class="feat-title">ATS Keywords</div>
+                <div class="feat-desc">Discover which industry keywords are missing from your resume that ATS systems look for.</div>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+                </div>
+                <div class="feat-title">Stronger Bullets</div>
+                <div class="feat-desc">Your weak resume lines rewritten with action verbs and metrics — ready to copy-paste.</div>
+            </div>
+            <div class="feat-card">
+                <div class="feat-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+                </div>
+                <div class="feat-title">Career Advice</div>
+                <div class="feat-desc">Specific, actionable next steps tailored to your background to accelerate your placement.</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Built with Flask & Groq Llama 3 · ResumeIQ © 2025
+    </footer>
+
+    <script>
+        const input = document.getElementById('resume-input');
+        const fileLabel = document.getElementById('file-label');
+        const fileName = document.getElementById('file-name');
+        const dropZone = document.getElementById('drop-zone');
+        const form = document.getElementById('upload-form');
+        const btn = document.getElementById('submit-btn');
+
+        input.addEventListener('change', () => {
+            if (input.files[0]) {
+                fileLabel.textContent = input.files[0].name;
+                fileName.classList.add('show');
+            }
+        });
+
+        dropZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files[0]) {
+                input.files = e.dataTransfer.files;
+                fileLabel.textContent = e.dataTransfer.files[0].name;
+                fileName.classList.add('show');
+            }
+        });
+
+        form.addEventListener('submit', () => {
+            btn.classList.add('loading');
+            btn.disabled = true;
+        });
+    </script>
+
+</body>
+
+</html>
