@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request
 import pdfplumber
 from groq import Groq
+from groq import load_dotenv
 import json
 import os
 import re
 
 app = Flask(__name__)
-
-client = Groq(api_key="GROQ_API_KEY")
+load_dotenv()
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 os.makedirs("uploads", exist_ok=True)
 
