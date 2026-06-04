@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import pdfplumber
 from groq import Groq
-from groq import load_dotenv
+from dotenv import load_dotenv
 import json
 import os
 import re
