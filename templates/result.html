@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1D9E75, #0F6E56);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.85;
+            margin-top: 6px;
+        }
+        
+        .container {
+            max-width: 860px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: #1D9E75;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 1.25rem;
+        }
+        
+        .summary-text {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #444;
+        }
+        
+        .qa-card {
+            border: 1px solid #e8f5f0;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .question {
+            background: #f7fffe;
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a2e;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            border-bottom: 1px solid #e8f5f0;
+        }
+        
+        .q-badge {
+            background: #1D9E75;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        
+        .answer {
+            padding: 14px 16px;
+            font-size: 14px;
+            line-height: 1.75;
+            color: #444;
+            background: white;
+            border-left: 4px solid #1D9E75;
+        }
+        
+        .answer-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1D9E75;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+        
+        .weak-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            background: #fff8f8;
+            border-left: 4px solid #E24B4A;
+            border-radius: 0 8px 8px 0;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #444;
+            line-height: 1.6;
+        }
+        
+        .weak-icon {
+            color: #E24B4A;
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        
+        .advice-text {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #444;
+            background: #f0faf6;
+            border-left: 4px solid #1D9E75;
+            padding: 14px 16px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin: 0 0 1.5rem;
+            background: #1D9E75;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .back-btn:hover {
+            background: #0F6E56;
+        }
+        
+        .tech-badge {
+            background: #e8f5f0;
+            color: #0F6E56;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>📄 Resume Analysis Report</h1>
+        <p>AI-powered insights based on your resume</p>
+    </div>
+
+    <div class="container">
+        <a href="/" class="back-btn">← Analyze Another Resume</a>
+
+        <!-- SUMMARY -->
+        <div class="section">
+            <div class="section-title">👤 Resume Summary</div>
+            <p class="summary-text">{{ data.summary }}</p>
+        </div>
+
+        <!-- HR QUESTIONS -->
+        <div class="section">
+            <div class="section-title">💼 HR Questions & Suggested Answers</div>
+            {% for item in data.hr_questions %}
+            <div class="qa-card">
+                <div class="question">
+                    <span class="q-badge">Q{{ loop.index }}</span> {{ item.question }}
+                </div>
+                <div class="answer">
+                    <div class="answer-label">💬 Suggested Answer</div>
+                    {{ item.answer }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- TECHNICAL QUESTIONS -->
+        <div class="section">
+            <div class="section-title">⚙️ Technical Questions & Suggested Answers</div>
+            {% for item in data.technical_questions %}
+            <div class="qa-card">
+                <div class="question">
+                    <span class="q-badge tech-badge">Q{{ loop.index }}</span> {{ item.question }}
+                </div>
+                <div class="answer">
+                    <div class="answer-label">💡 Suggested Answer</div>
+                    {{ item.answer }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- WEAK AREAS -->
+        <div class="section">
+            <div class="section-title">⚠️ Identified Weak Areas</div>
+            {% for item in data.weak_areas %}
+            <div class="weak-item">
+                <span class="weak-icon">●</span> {{ item }}
+            </div>
+            {% endfor %}
+        </div>
+        <!-- SCORE SECTION -->
+        <div class="section">
+            <div class="section-title">🎯 Resume Score</div>
+            <div style="text-align:center;margin-bottom:1.5rem">
+                <div style="font-size:56px;font-weight:700;color:#1D9E75">
+                    {{ data.resume_score.overall }}<span style="font-size:24px;color:#888">/100</span>
+                </div>
+                <p style="color:#666;font-size:14px;margin-top:6px">{{ data.resume_score.verdict }}</p>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px">
+                {% for category, score in data.resume_score.breakdown.items() %}
+                <div style="background:#f0faf6;border-radius:10px;padding:14px;text-align:center">
+                    <div style="font-size:22px;font-weight:600;color:#1D9E75">{{ score }}<span style="font-size:13px;color:#888">/20</span></div>
+                    <div style="font-size:12px;color:#666;margin-top:4px;text-transform:capitalize">{{ category }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- MISSING KEYWORDS -->
+        <div class="section">
+            <div class="section-title">🔍 Missing ATS Keywords</div>
+            <p style="font-size:13px;color:#888;margin-bottom:14px">
+                These keywords are commonly expected for your target role but are missing from your resume.
+            </p>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+                {% for kw in data.missing_keywords %}
+                <span style="background:#fff4f4;border:1px solid #f09595;color:#a32d2d;
+                 padding:5px 12px;border-radius:20px;font-size:13px">
+      ✕ {{ kw }}
+    </span> {% endfor %}
+            </div>
+        </div>
+        <!-- IMPROVED BULLETS -->
+        <div class="section">
+            <div class="section-title">✏️ Stronger Resume Bullets</div>
+            <p style="font-size:13px;color:#888;margin-bottom:14px">
+                Rewritten versions of your weak bullet points — copy these directly into your resume.
+            </p>
+            {% for item in data.improved_bullets %}
+            <div style="margin-bottom:16px">
+                <div style="background:#fff8f8;border-left:4px solid #E24B4A;padding:10px 14px;
+                border-radius:0 8px 8px 0;font-size:13px;color:#666;margin-bottom:6px">
+                    <span style="font-size:11px;font-weight:700;color:#E24B4A;display:block;margin-bottom:4px">ORIGINAL</span> {{ item.original }}
+                </div>
+                <div style="background:#f0faf6;border-left:4px solid #1D9E75;padding:10px 14px;
+                border-radius:0 8px 8px 0;font-size:13px;color:#333">
+                    <span style="font-size:11px;font-weight:700;color:#1D9E75;display:block;margin-bottom:4px">IMPROVED</span> {{ item.improved }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- CAREER ADVICE -->
+        <div class="section">
+            <div class="section-title">🚀 Personalized Career Advice</div>
+            <p class="advice-text">{{ data.career_advice }}</p>
+        </div>
+
+    </div>
+</body>
+
+</html>
